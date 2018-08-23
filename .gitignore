@@ -1,0 +1,9 @@
+/.idea
+/config/logs
+/src/test
+/logs
+/target
+/DeviceManageService.iml
+/.settings
+/.classpath
+/.project

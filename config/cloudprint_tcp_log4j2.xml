@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- RollingRandomAccessFile的属性：
+fileName  指定当前日志文件的位置和文件名称
+filePattern  指定当发生Rolling时，文件的转移和重命名规则
+SizeBasedTriggeringPolicy  指定当文件体积大于size指定的值时，触发Rolling
+DefaultRolloverStrategy  指定最多保存的文件个数
+
+TimeBasedTriggeringPolicy  这个配置需要和filePattern结合使用，
+注意filePattern中配置的文件重命名规则是${FILE_NAME}-%d{yyyy-MM-dd HH-mm}-%i，最小的时间粒度是mm，即分钟，
+TimeBasedTriggeringPolicy指定的size是1，结合起来就是每1分钟生成一个新文件。
+如果改成%d{yyyy-MM-dd HH}，最小粒度为小时，则每一个小时生成一个文件。 -->
+<Configuration status="off" monitorInterval="30">  
+
+	<properties>  
+        <property name="log_path">config/logs</property>  
+    </properties> 
+	
+    <Appenders>  
+        <!-- <NoSql name="databaseAppender">  
+            <MongoDb databaseName="db_cloud_device" collectionName="extract-invoice_log"  
+                server="127.0.0.1" port="27017" userName="gzds" password="Gzds1130" />  
+        </NoSql> -->
+          <!-- 打印台  -->
+        <Console name="Console" target="SYSTEM_OUT">
+        	<!--控制台只输出level及以上级别的信息-->
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss} %level [%file:%line] - %msg%n" />  
+        </Console> 
+        
+        <RollingRandomAccessFile name="InfoFile"  
+            fileName="${log_path}/info/info.log"  
+            filePattern="${log_path}/info/info-%d{yyyy-MM}-%i.log">  
+            <Filters>  
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL" />  
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY" />  
+            </Filters>  
+            <PatternLayout pattern="%date{yyyy-MM-dd HH:mm:ss} %level [%file:%line] - %msg%n" />  
+            <Policies>
+            	<!-- 归档每天的文件 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                <!-- 限制单个文件大小 -->
+                <SizeBasedTriggeringPolicy size="20 MB" />  
+            </Policies>  
+            <DefaultRolloverStrategy max="30" />  
+        </RollingRandomAccessFile>  
+        
+         <RollingRandomAccessFile name="WarnFile"  
+            fileName="${log_path}/warn/warn.log"  
+            filePattern="${log_path}/error/error-%d{yyyy-MM}-%i.log">  
+            <Filters>
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL" />
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY" />
+            </Filters> 
+            <PatternLayout pattern="%date{yyyy-MM-dd_HH:mm:ss} %level [%file:%line] - %msg%n" />  
+            <Policies>
+            	<!-- 归档每天的文件 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                <!-- 限制单个文件大小 -->
+                <SizeBasedTriggeringPolicy size="20 MB" />  
+            </Policies>  
+            <DefaultRolloverStrategy max="30" />  
+        </RollingRandomAccessFile>  
+          
+          
+        <RollingRandomAccessFile name="ErrorFile"  
+            fileName="${log_path}/error/error.log"  
+            filePattern="${log_path}/error/error-%d{yyyy-MM}-%i.log">  
+            <Filters>
+                <ThresholdFilter level="fatal" onMatch="DENY" onMismatch="NEUTRAL" />
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY" />
+            </Filters> 
+            <PatternLayout pattern="%date{yyyy-MM-dd_HH:mm:ss} %level [%file:%line] - %msg%n" />  
+            <Policies>
+            	<!-- 归档每天的文件 -->
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                <!-- 限制单个文件大小 -->
+                <SizeBasedTriggeringPolicy size="20 MB" />  
+            </Policies>  
+            <DefaultRolloverStrategy max="30" />  
+        </RollingRandomAccessFile>  
+          
+       <!--  <RollingRandomAccessFile name="FatalFile"  
+            fileName="${log_path}/extract-invoice/fatal/fatal.log"  
+            filePattern="${log_path}/extract-invoice/fatal/$${date:yyyy-MM-dd}/fatal-%d{yyyy-MM-dd HH}-%i.log">  
+            <Filters>  
+                <ThresholdFilter level="fatal" onMatch="ACCEPT" onMismatch="DENY" />  
+            </Filters>  
+            <PatternLayout pattern="%date{yyyy-MM-dd_HH:mm:ss} %level [%file:%line] - %msg%n" />  
+            <Policies>
+            	归档每天的文件
+                <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+                限制单个文件大小
+                <SizeBasedTriggeringPolicy size="20 MB" />  
+            </Policies>  
+            <DefaultRolloverStrategy max="30" /> 
+        </RollingRandomAccessFile>  -->
+    </Appenders>  
+    <Loggers>  
+        <Root level="info"> 
+            <appender-ref ref="Console" /> 
+            <appender-ref ref="InfoFile" /> 
+            <appender-ref ref="WarnFile" /> 
+            <appender-ref ref="ErrorFile" /> 
+        </Root>  
+    </Loggers>  
+</Configuration>  
