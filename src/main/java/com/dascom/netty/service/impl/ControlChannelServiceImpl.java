@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dascom.common.RedisKey;
 import com.dascom.common.RequestEntity;
 import com.dascom.common.utils.AsyncHttpUtil;
 import com.dascom.common.utils.IdentificationResponse;
@@ -90,7 +91,7 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 			PrinterStatus printerStatus = new PrinterStatus();
 			printerStatus.setMain("dead");
 			printerStatus.setNewest(new Date());
-			String status = redisHandle.hget("status", number);
+			String status = redisHandle.hget(RedisKey.STATUS, number);
 			if (!StringUtils.isEmpty(status)) {
 				PrinterStatus frontStatus = JSONObject.parseObject(status, PrinterStatus.class);
 				if (!"dead".equals(frontStatus.getMain())) {
@@ -98,7 +99,7 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 				}
 				
 			}
-			redisHandle.hset("status", number, JSONObject.toJSONString(printerStatus));
+			redisHandle.hset(RedisKey.STATUS, number, JSONObject.toJSONString(printerStatus));
 		}
 	}
 
@@ -122,7 +123,7 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 		Date date = new Date();
 		printerStatus.setNewest(date);// 当前时间
 		
-		String status = redisHandle.hget("status", number);
+		String status = redisHandle.hget(RedisKey.STATUS, number);
 		if (!StringUtils.isEmpty(status)) {
 			PrinterStatus frontStatus = JSONObject.parseObject(status, PrinterStatus.class);
 			if (!printerStatus.getMain().equals(frontStatus.getMain())) {
@@ -136,7 +137,7 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 				asyncHttpUtil.sendPrintInform(number);
 			}
 		}
-		redisHandle.hset("status", number, JSONObject.toJSONString(printerStatus));
+		redisHandle.hset(RedisKey.STATUS, number, JSONObject.toJSONString(printerStatus));
 //		PrinterEntity pe = printerDao.updateStatus(number, ps);
 //		if (!ps.getMain().equals(pe.getStatus().getMain())) {
 //			if ("ready".equals(ps.getMain())) {
@@ -175,7 +176,7 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 				}else {
 					ChannelHandlerContext oldChannel = ControlChannelCtxMap.get(number);
 					if (oldChannel!=null) {
-						String hget = redisHandle.hget("status", number);
+						String hget = redisHandle.hget(RedisKey.STATUS, number);
 						if (!StringUtils.isEmpty(hget)) {
 							PrinterStatus status = JSONObject.parseObject(hget, PrinterStatus.class);
 							if (!"dead".equals(status.getMain())) {
@@ -244,7 +245,7 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 					PrinterStatus printerStatus=new PrinterStatus();
 					printerStatus.setMain("dead");
 					printerStatus.setNewest(new Date());
-					String status = redisHandle.hget("status", number);
+					String status = redisHandle.hget(RedisKey.STATUS, number);
 					if (!StringUtils.isEmpty(status)) {
 						PrinterStatus frontStatus = JSONObject.parseObject(status, PrinterStatus.class);
 						if (!"dead".equals(frontStatus.getMain())) {
@@ -253,7 +254,7 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 						}
 						
 					}
-					redisHandle.hset("status", number, JSONObject.toJSONString(printerStatus));
+					redisHandle.hset(RedisKey.STATUS, number, JSONObject.toJSONString(printerStatus));
 				}
 			}else {
 				log.info("number:{}的通道心跳标记不存在",number);
@@ -522,13 +523,11 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 			if ((length-laterMessage.length)>255) {
 				sendMessage[6]=(byte)0xff;
 			}else if ((length-laterMessage.length)==0) {
-				String userMessage;
+				String userMessage = null;
 				if (laterMessage.length>2) {
 					userMessage=new String(laterMessage,2,laterMessage.length-2,userMessageEncode);
-				}else {
-					userMessage="{\"userName\":\"anyone\"}";
+					redisHandle.set(RedisKey.RESTRICTPRINT+number, userMessage);
 				}
-				redisHandle.set("UserMessage"+number, userMessage);
 				log.info("number:{},读取用户数据完成,指令1065,message:{}",number,userMessage);
 				RequestEntityMap.remove(number);
 				return;

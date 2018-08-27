@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.dascom.common.ErrorCode;
+import com.dascom.common.RedisKey;
 import com.dascom.common.RequestEntity;
 import com.dascom.common.ResultVO;
 import com.dascom.common.utils.ResultVOUtil;
@@ -75,7 +76,7 @@ public class UserController {
 			re.setData(bytes);
 			resultVO = userService.writeUserMessage(number, id, re);
 			if (resultVO.getCode()==0) {
-				redisHandle.set("UserMessage"+number, data);
+				redisHandle.set(RedisKey.RESTRICTPRINT+number, data);
 			}
 		}catch (Exception e) {
 			StringBuffer sb=new StringBuffer();

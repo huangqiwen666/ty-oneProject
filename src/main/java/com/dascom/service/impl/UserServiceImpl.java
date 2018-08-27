@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dascom.common.RedisKey;
 import com.dascom.common.RequestEntity;
 import com.dascom.common.ResultVO;
 import com.dascom.common.utils.ResultVOUtil;
@@ -51,7 +52,7 @@ public class UserServiceImpl implements UserService {
 				PrinterStatus ps=new PrinterStatus();
 				ps.setMain("dead");
 				ps.setNewest(new Date());
-				redisHandle.hset("status", number, JSONObject.toJSONString(ps));
+				redisHandle.hset(RedisKey.STATUS, number, JSONObject.toJSONString(ps));
 				resultVO=ResultVOUtil.error(1011,id);
 				log.info("number:{}通道都不存在了，设备离线，返回code:{}",number,resultVO.getCode());
 				return resultVO;

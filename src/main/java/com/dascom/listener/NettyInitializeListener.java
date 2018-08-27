@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 
 import com.alibaba.fastjson.JSONObject;
+import com.dascom.common.RedisKey;
 import com.dascom.entity.PrinterStatus;
 import com.dascom.netty.NettyChannelInitiator;
 import com.dascom.redis.RedisHandle;
@@ -35,7 +36,7 @@ public class NettyInitializeListener implements ServletContextListener{
 	public void contextInitialized(ServletContextEvent arg0) {
 //		printerDao.updateAliveAll();
 		HashOperations<String, String, String> opsForHash = redisHandle.getOpsForHash();
-		Map<String, String> entries = opsForHash.entries("status");
+		Map<String, String> entries = opsForHash.entries(RedisKey.STATUS);
 		Set<String> keySet = entries.keySet();
 		for (String number : keySet) {
 			String string = entries.get(number);

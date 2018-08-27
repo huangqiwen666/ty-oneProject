@@ -27,7 +27,7 @@ public class ErrorCode {
 	 */
 	public static Integer handleError=1012;
 	/**
-	 * 打印超时
+	 * 操作超时
 	 */
 	public static Integer handleTimeout = 1013;
 	/**

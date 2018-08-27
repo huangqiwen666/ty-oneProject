@@ -1,9 +1,6 @@
 package com.dascom.rabbitmq;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,11 +21,11 @@ public class RabbitConfig {
     private String password;
 
     
-    public static final String EXCHANGE = "print";
+//    public static final String EXCHANGE = "print";
  
     public static final String QUEUE_RESULT = "printRequest";
  
-    public static final String ROUTINGKEY_RESULT = "printRequest";
+//    public static final String ROUTINGKEY_RESULT = "printRequest";
 
     
 //	@Bean
@@ -49,17 +46,17 @@ public class RabbitConfig {
     public Queue printResultQueue() {
         return new Queue(QUEUE_RESULT);
     }
-
-	@Bean
-    public TopicExchange TopicExchange() {
-        return new TopicExchange(EXCHANGE);
-	}
-	
-    @Bean
-    public Binding binding() {
-        return BindingBuilder.bind(printResultQueue()).to(TopicExchange()).with(ROUTINGKEY_RESULT);
-    }
-    
+//
+//	@Bean
+//    public TopicExchange TopicExchange() {
+//        return new TopicExchange(EXCHANGE);
+//	}
+//	
+//    @Bean
+//    public Binding binding() {
+//        return BindingBuilder.bind(printResultQueue()).to(TopicExchange()).with(ROUTINGKEY_RESULT);
+//    }
+//    
 
 	
 	

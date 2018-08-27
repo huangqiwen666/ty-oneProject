@@ -14,6 +14,6 @@ public class MsgProducer{
     private RabbitTemplate rabbitTemplate;
  
     public void sendMsg(String number) {
-        rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE,RabbitConfig.ROUTINGKEY_RESULT, number);
+        rabbitTemplate.convertAndSend(RabbitConfig.QUEUE_RESULT, number);
     }
 }
