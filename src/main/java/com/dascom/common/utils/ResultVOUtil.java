@@ -47,4 +47,11 @@ public class ResultVOUtil {
 		resultVO.setId(id);
 		return resultVO;
 	}
+	public static ResultVO<Object> error(Integer code,String id,String data) {
+		ResultVO<Object> resultVO = new ResultVO<Object>();
+		resultVO.setCode(code);
+		resultVO.setId(id);
+		resultVO.setData(data);
+		return resultVO;
+	}
 }

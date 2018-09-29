@@ -82,8 +82,10 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 			if (data_channel!=null) {
 				data_channel.close();
 			}
-			ControlChannelCtxMap.remove(number);
-			DeviceCacheSizeMap.remove(number);
+			if (ctx==ControlChannelCtxMap.get(number)) {
+				ControlChannelCtxMap.remove(number);
+				DeviceCacheSizeMap.remove(number);
+			}
 			RequestEntity requestEntity = RequestEntityMap.get(number);
 			if (requestEntity!=null&&!requestEntity.isMark()) {
 				RequestEntityMap.remove(number);
@@ -189,7 +191,6 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 						}
 						ControlChannelCtxMap.remove(number);
 						oldChannel.close();//关闭旧连接
-						
 					}
 				}
 //				entity.setReqHost(reqHost);//请求host
@@ -643,3 +644,5 @@ public class ControlChannelServiceImpl implements ControlChannelService {
 		asyncHttpUtil.printQrcode(number);
 	}
 }
+
+

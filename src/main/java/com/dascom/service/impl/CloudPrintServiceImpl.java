@@ -80,7 +80,7 @@ public class CloudPrintServiceImpl implements CloudPrintService {
 					ps.setNewest(new Date());
 					redisHandle.hset(RedisKey.STATUS, number, JSONObject.toJSONString(ps));
 					PrintStatisticsService.printFailureStatistics(number);
-					resultVO=ResultVOUtil.error(ErrorCode.printerOffline,id);
+					resultVO=ResultVOUtil.error(ErrorCode.printerOffline,id,ErrorCode.printerOfflineDescribe);
 					log.info("number:{}通道都不存在了，设备离线，返回code:{}",number,resultVO.getCode());
 					return resultVO;
 				}else {
@@ -100,7 +100,7 @@ public class CloudPrintServiceImpl implements CloudPrintService {
 				RequestEntity requestEntity = RequestEntityMap.get(number);
 				if (requestEntity==null) {
 					resultVO=ResultVOUtil.error(ErrorCode.handleError,id);
-					log.info("number:{}打印异常，返回code:{}",number,resultVO.getCode());
+					log.info("number:{}打印异常，返回code:{}",number,resultVO.getCode(),ErrorCode.handleErrorDescribe);
 					PrintStatisticsService.printFailureStatistics(number);
 					return resultVO;
 				}
@@ -112,7 +112,7 @@ public class CloudPrintServiceImpl implements CloudPrintService {
 				}
 				statistics++;
 			}
-			resultVO=ResultVOUtil.error(ErrorCode.handleTimeout,id);
+			resultVO=ResultVOUtil.error(ErrorCode.handleTimeout,id,ErrorCode.handleTimeoutDescribe);
 			PrintStatisticsService.printFailureStatistics(number);
 			datactx.close();//数据通道打印超时，关闭通道
 			log.info("number:{}打印超时，返回code:{}",number,resultVO.getCode());
